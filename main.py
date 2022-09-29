@@ -1,6 +1,3 @@
-# Name: John Sigvertsen
-# ID: 008655435
-
 import csv
 import math
 
