@@ -1,3 +1,6 @@
+# Name: John Sigvertsen
+# ID: 008655435
+
 import csv
 import math
 
@@ -75,11 +78,58 @@ def truck_scheduler(truck_packages, departure_time=timedelta(hours=8), speed=18)
     return dist_traveled  # return the total distance traveled for the truck
 
 
-def interface(time):
-    print("Total miles:", format(total_miles, '.2f'))  # print total miles of all trucks in interface
+def interface():
 
-    for i in range(40):
-        print(hash_table.search(i + 1).get_status(time))  # print all attributes of each package
+    total_miles = truck1.miles + truck2.miles + truck3.miles  # miles added for each truck
+    hours = 0
+    minutes = 0
+
+    while True:
+        try:
+            # user enters time, time is formatted to timedelta input for interface
+            user_time = (input("Enter time to see package status. (Format: HH:MM, 24-Hour Time): ")).split(":")
+            hours = int(user_time[0])
+            minutes = int(user_time[1])
+
+            if 0 <= int(hours) <= 24 and 0 <= int(minutes) <= 59:
+                break
+            else:
+                print("\nPlease enter a valid time using numbers and a semicolon.")
+                continue
+
+        # user missing the semicolon in input
+        except IndexError:
+            print("\nPlease enter a valid time using numbers and a semicolon.")
+            continue
+        # user entered non numbers in input
+        except ValueError:
+            print("\nPlease enter a valid time using numbers and a semicolon.")
+            continue
+
+    while True:
+        try:
+            # user enters package ID or * for all packages and truck miles
+            all_or_one = input("Enter Package ID or (*) for all packages and total truck miles: ")
+
+            if all_or_one == "*":
+                # print total miles trucks has driven
+                print("Total miles:", format(total_miles, '.2f'))
+                # print status of all packages
+                for i in range(len(hash_table.lst)):
+                    print(hash_table.search(i + 1).get_status(timedelta(hours=hours, minutes=minutes)))
+                break
+            else:
+                # print individual package
+                print(hash_table.search(int(all_or_one)).get_status(timedelta(hours=hours, minutes=minutes)))
+                break
+        # package id doesn't exist
+        except AttributeError:
+            print("\nPlease enter a valid Package ID.")
+            continue
+        # non numbers are entered by user
+        except ValueError:
+            print("\nPlease enter a valid Package ID.")
+            continue
 
 
 # address file containing address and address ID
@@ -107,8 +157,5 @@ truck2.miles += truck_scheduler(truck2.get_packages(), timedelta(hours=9, minute
 hash_table.search(9).address = '410 S State St'  # update address for package 9
 truck3.miles += truck_scheduler(truck3.get_packages(), timedelta(hours=10, minutes=20))
 
-# add total miles for each truck
-total_miles = truck1.miles + truck2.miles + truck3.miles
-
-# show status of packages at a specified time
-interface(timedelta(hours=13))
+# start user input
+interface()
